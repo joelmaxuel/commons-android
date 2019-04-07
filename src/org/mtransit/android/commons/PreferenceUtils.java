@@ -8,12 +8,14 @@ import org.mtransit.android.commons.task.MTAsyncTask;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 public class PreferenceUtils {
 
-	private static final String TAG = PreferenceUtils.class.getSimpleName();
+	private static final String LOG_TAG = PreferenceUtils.class.getSimpleName();
 
-	public static final String LCL_PREF_NAME = "lcl";
+	private static final String LCL_PREF_NAME = "lcl";
 
 	public static final String PREFS_UNITS = "pUnits";
 	public static final String PREFS_UNITS_METRIC = "metric";
@@ -35,6 +37,7 @@ public class PreferenceUtils {
 	public static final String PREFS_LCL_AGENCY_TYPE_TAB_AGENCY_DEFAULT = null;
 	private static final String PREFS_LCL_AGENCY_TYPE_TAB_AGENCY = "pAgencyTypeTabAgency";
 
+	@NonNull
 	public static String getPREFS_LCL_AGENCY_TYPE_TAB_AGENCY(int typeId) {
 		return PREFS_LCL_AGENCY_TYPE_TAB_AGENCY + typeId;
 	}
@@ -42,7 +45,8 @@ public class PreferenceUtils {
 	public static final long PREFS_LCL_RTS_ROUTE_TRIP_ID_TAB_DEFAULT = -1L;
 	private static final String PREFS_LCL_RTS_ROUTE_TRIP_ID_TAB = "pRTSRouteTripIdTab";
 
-	public static String getPREFS_LCL_RTS_ROUTE_TRIP_ID_TAB(String authority, long routeId) {
+	@NonNull
+	public static String getPREFS_LCL_RTS_ROUTE_TRIP_ID_TAB(@NonNull String authority, long routeId) {
 		return PREFS_LCL_RTS_ROUTE_TRIP_ID_TAB + authority + routeId;
 	}
 
@@ -50,115 +54,123 @@ public class PreferenceUtils {
 	private static final String PREFS_RTS_ROUTES_SHOWING_LIST_INSTEAD_OF_GRID = "pRTSRouteShowingListInsteadOfGrid";
 	public static final String PREFS_RTS_ROUTES_SHOWING_LIST_INSTEAD_OF_GRID_LAST_SET = PREFS_RTS_ROUTES_SHOWING_LIST_INSTEAD_OF_GRID + "LastSet";
 
-	public static String getPREFS_RTS_ROUTES_SHOWING_LIST_INSTEAD_OF_GRID(String authority) {
+	@NonNull
+	public static String getPREFS_RTS_ROUTES_SHOWING_LIST_INSTEAD_OF_GRID(@NonNull String authority) {
 		return PREFS_RTS_ROUTES_SHOWING_LIST_INSTEAD_OF_GRID + authority;
 	}
 
 	public static final String PREFS_LCL_MAP_FILTER_TYPE_IDS = "pMapFilterTypeIds";
-	public static final HashSet<String> PREFS_LCL_MAP_FILTER_TYPE_IDS_DEFAULT = new HashSet<String>();
+	public static final HashSet<String> PREFS_LCL_MAP_FILTER_TYPE_IDS_DEFAULT = new HashSet<>();
 	public static final boolean PREFS_RTS_ROUTES_SHOWING_LIST_INSTEAD_OF_MAP_DEFAULT = true;
 
 	public static final boolean PREFS_AGENCY_POIS_SHOWING_LIST_INSTEAD_OF_MAP_DEFAULT = true;
 	private static final String PREFS_AGENCY_POIS_SHOWING_LIST_INSTEAD_OF_MAP = "pAgencyPoisShowingListInsteadOfMap";
 	public static final String PREFS_AGENCY_POIS_SHOWING_LIST_INSTEAD_OF_MAP_LAST_SET = PREFS_AGENCY_POIS_SHOWING_LIST_INSTEAD_OF_MAP + "LastSet";
 
-	public static String getPREFS_AGENCY_POIS_SHOWING_LIST_INSTEAD_OF_MAP(String authority) {
+	@NonNull
+	public static String getPREFS_AGENCY_POIS_SHOWING_LIST_INSTEAD_OF_MAP(@NonNull String authority) {
 		return PREFS_AGENCY_POIS_SHOWING_LIST_INSTEAD_OF_MAP + authority;
 	}
 
 	public static final String PREFS_LCL_ROOT_SCREEN_ITEM_ID = "pRootScreenItemId";
 	public static final String PREFS_LCL_ROOT_SCREEN_ITEM_ID_DEFAULT = null; // worst default
 
-	public static SharedPreferences getPrefDefault(Context context) {
+	@NonNull
+	public static SharedPreferences getPrefDefault(@NonNull Context context) {
 		return PreferenceManager.getDefaultSharedPreferences(context);
 	}
 
-	public static int getPrefDefault(Context context, String prefKey, int defaultValue) {
+	public static int getPrefDefault(@Nullable Context context, @NonNull String prefKey, int defaultValue) {
 		if (context == null) {
 			return defaultValue;
 		}
 		return getPref(getPrefDefault(context), prefKey, defaultValue);
 	}
 
-	public static String getPrefDefault(Context context, String prefKey, String defaultValue) {
+	@Nullable
+	public static String getPrefDefault(@Nullable Context context, @NonNull String prefKey, @Nullable String defaultValue) {
 		if (context == null) {
-			MTLog.w(TAG, "Context null, using default value '%s' for preference '%s'!", defaultValue, prefKey);
+			MTLog.w(LOG_TAG, "Context null, using default value '%s' for preference '%s'!", defaultValue, prefKey);
 			return defaultValue;
 		}
 		return getPref(getPrefDefault(context), prefKey, defaultValue);
 	}
 
-	public static boolean getPrefDefault(Context context, String prefKey, boolean defaultValue) {
+	public static boolean getPrefDefault(@Nullable Context context, @NonNull String prefKey, boolean defaultValue) {
 		if (context == null) {
-			MTLog.w(TAG, "Context null, using default value '%s' for preference '%s'!", defaultValue, prefKey);
+			MTLog.w(LOG_TAG, "Context null, using default value '%s' for preference '%s'!", defaultValue, prefKey);
 			return defaultValue;
 		}
 		return getPref(getPrefDefault(context), prefKey, defaultValue);
 	}
 
-	public static int getPrefLcl(Context context, String prefKey, int defaultValue) {
+	public static int getPrefLcl(@Nullable Context context, @NonNull String prefKey, int defaultValue) {
 		if (context == null) {
 			return defaultValue;
 		}
 		return getPref(context.getSharedPreferences(LCL_PREF_NAME, Context.MODE_PRIVATE), prefKey, defaultValue);
 	}
 
-	public static boolean getPrefLcl(Context context, String prefKey, boolean defaultValue) {
+	public static boolean getPrefLcl(@Nullable Context context, @NonNull String prefKey, boolean defaultValue) {
 		if (context == null) {
 			return defaultValue;
 		}
 		return getPref(context.getSharedPreferences(LCL_PREF_NAME, Context.MODE_PRIVATE), prefKey, defaultValue);
 	}
 
-	public static long getPrefLcl(Context context, String prefKey, long defaultValue) {
+	public static long getPrefLcl(@Nullable Context context, @NonNull String prefKey, long defaultValue) {
 		if (context == null) {
 			return defaultValue;
 		}
 		return getPref(context.getSharedPreferences(LCL_PREF_NAME, Context.MODE_PRIVATE), prefKey, defaultValue);
 	}
 
-	public static String getPrefLcl(Context context, String prefKey, String defaultValue) {
+	@Nullable
+	public static String getPrefLcl(@Nullable Context context, @NonNull String prefKey, @Nullable String defaultValue) {
 		if (context == null) {
 			return defaultValue;
 		}
 		return getPref(context.getSharedPreferences(LCL_PREF_NAME, Context.MODE_PRIVATE), prefKey, defaultValue);
 	}
 
-	public static Set<String> getPrefLcl(Context context, String prefKey, Set<String> defaultValue) {
+	@Nullable
+	public static Set<String> getPrefLcl(@Nullable Context context, @NonNull String prefKey, @Nullable Set<String> defaultValue) {
 		if (context == null) {
 			return defaultValue;
 		}
 		return getPref(context.getSharedPreferences(LCL_PREF_NAME, Context.MODE_PRIVATE), prefKey, defaultValue);
 	}
 
-	public static boolean hasPrefLcl(Context context, String prefKey) {
+	public static boolean hasPrefLcl(@Nullable Context context, @NonNull String prefKey) {
 		if (context == null) {
 			return false;
 		}
 		return context.getSharedPreferences(LCL_PREF_NAME, Context.MODE_PRIVATE).contains(prefKey);
 	}
 
-	private static int getPref(SharedPreferences sharedPreferences, String prefKey, int defaultValue) {
+	private static int getPref(@NonNull SharedPreferences sharedPreferences, @NonNull String prefKey, int defaultValue) {
 		return sharedPreferences.getInt(prefKey, defaultValue);
 	}
 
-	private static boolean getPref(SharedPreferences sharedPreferences, String prefKey, boolean defaultValue) {
+	private static boolean getPref(@NonNull SharedPreferences sharedPreferences, @NonNull String prefKey, boolean defaultValue) {
 		return sharedPreferences.getBoolean(prefKey, defaultValue);
 	}
 
-	private static long getPref(SharedPreferences sharedPreferences, String prefKey, long defaultValue) {
+	private static long getPref(@NonNull SharedPreferences sharedPreferences, @NonNull String prefKey, long defaultValue) {
 		return sharedPreferences.getLong(prefKey, defaultValue);
 	}
 
-	private static Set<String> getPref(SharedPreferences sharedPreferences, String prefKey, Set<String> defaultValue) {
+	@Nullable
+	private static Set<String> getPref(@NonNull SharedPreferences sharedPreferences, @NonNull String prefKey, @Nullable Set<String> defaultValue) {
 		return sharedPreferences.getStringSet(prefKey, defaultValue);
 	}
 
-	private static String getPref(SharedPreferences sharedPreferences, String prefKey, String defaultValue) {
+	@Nullable
+	private static String getPref(@NonNull SharedPreferences sharedPreferences, @NonNull String prefKey, @Nullable String defaultValue) {
 		return sharedPreferences.getString(prefKey, defaultValue);
 	}
 
-	public static void savePrefDefault(final Context context, final String prefKey, final int newValue, final boolean sync) {
+	public static void savePrefDefault(final @Nullable Context context, final @NonNull String prefKey, final int newValue, final boolean sync) {
 		if (context == null) {
 			return;
 		}
@@ -167,9 +179,10 @@ public class PreferenceUtils {
 			return;
 		}
 		new MTAsyncTask<Void, Void, Void>() {
+			@NonNull
 			@Override
 			public String getLogTag() {
-				return TAG + ">savePrefDefault";
+				return LOG_TAG + ">savePrefDefault";
 			}
 
 			@Override
@@ -180,7 +193,7 @@ public class PreferenceUtils {
 		}.executeOnExecutor(TaskUtils.THREAD_POOL_EXECUTOR);
 	}
 
-	public static void savePrefDefault(final Context context, final String prefKey, final Boolean newValue, final boolean sync) {
+	public static void savePrefDefault(final @Nullable Context context, final @NonNull String prefKey, final @Nullable Boolean newValue, final boolean sync) {
 		if (context == null) {
 			return;
 		}
@@ -189,9 +202,10 @@ public class PreferenceUtils {
 			return;
 		}
 		new MTAsyncTask<Void, Void, Void>() {
+			@NonNull
 			@Override
 			public String getLogTag() {
-				return TAG + ">savePrefDefault";
+				return LOG_TAG + ">savePrefDefault";
 			}
 
 			@Override
@@ -202,7 +216,7 @@ public class PreferenceUtils {
 		}.executeOnExecutor(TaskUtils.THREAD_POOL_EXECUTOR);
 	}
 
-	public static void savePrefLcl(final Context context, final String prefKey, final Integer newValue, final boolean sync) {
+	public static void savePrefLcl(final @Nullable Context context, final @NonNull String prefKey, final @Nullable Integer newValue, final boolean sync) {
 		if (context == null) {
 			return;
 		}
@@ -211,9 +225,10 @@ public class PreferenceUtils {
 			return;
 		}
 		new MTAsyncTask<Void, Void, Void>() {
+			@NonNull
 			@Override
 			public String getLogTag() {
-				return TAG + ">savePrefLcl";
+				return LOG_TAG + ">savePrefLcl";
 			}
 
 			@Override
@@ -224,7 +239,7 @@ public class PreferenceUtils {
 		}.executeOnExecutor(TaskUtils.THREAD_POOL_EXECUTOR);
 	}
 
-	public static void savePrefLcl(final Context context, final String prefKey, final Boolean newValue, final boolean sync) {
+	public static void savePrefLcl(final @Nullable Context context, final @NonNull String prefKey, final @Nullable Boolean newValue, final boolean sync) {
 		if (context == null) {
 			return;
 		}
@@ -233,9 +248,10 @@ public class PreferenceUtils {
 			return;
 		}
 		new MTAsyncTask<Void, Void, Void>() {
+			@NonNull
 			@Override
 			public String getLogTag() {
-				return TAG + ">savePrefLcl";
+				return LOG_TAG + ">savePrefLcl";
 			}
 
 			@Override
@@ -246,7 +262,7 @@ public class PreferenceUtils {
 		}.executeOnExecutor(TaskUtils.THREAD_POOL_EXECUTOR);
 	}
 
-	public static void savePrefLcl(final Context context, final String prefKey, final Long newValue, final boolean sync) {
+	public static void savePrefLcl(final @Nullable Context context, final @NonNull String prefKey, final @Nullable Long newValue, final boolean sync) {
 		if (context == null) {
 			return;
 		}
@@ -255,9 +271,10 @@ public class PreferenceUtils {
 			return;
 		}
 		new MTAsyncTask<Void, Void, Void>() {
+			@NonNull
 			@Override
 			public String getLogTag() {
-				return TAG + ">savePrefLcl";
+				return LOG_TAG + ">savePrefLcl";
 			}
 
 			@Override
@@ -268,7 +285,7 @@ public class PreferenceUtils {
 		}.executeOnExecutor(TaskUtils.THREAD_POOL_EXECUTOR);
 	}
 
-	public static void savePrefLcl(final Context context, final String prefKey, final String newValue, final boolean sync) {
+	public static void savePrefLcl(final @Nullable Context context, final @NonNull String prefKey, final @Nullable String newValue, final boolean sync) {
 		if (context == null) {
 			return;
 		}
@@ -277,9 +294,10 @@ public class PreferenceUtils {
 			return;
 		}
 		new MTAsyncTask<Void, Void, Void>() {
+			@NonNull
 			@Override
 			public String getLogTag() {
-				return TAG + ">savePrefLcl";
+				return LOG_TAG + ">savePrefLcl";
 			}
 
 			@Override
@@ -290,7 +308,7 @@ public class PreferenceUtils {
 		}.executeOnExecutor(TaskUtils.THREAD_POOL_EXECUTOR);
 	}
 
-	public static void savePrefLcl(final Context context, final String prefKey, final Set<String> newValue, final boolean sync) {
+	public static void savePrefLcl(final @Nullable Context context, final @NonNull String prefKey, final @Nullable Set<String> newValue, final boolean sync) {
 		if (context == null) {
 			return;
 		}
@@ -299,9 +317,10 @@ public class PreferenceUtils {
 			return;
 		}
 		new MTAsyncTask<Void, Void, Void>() {
+			@NonNull
 			@Override
 			public String getLogTag() {
-				return TAG + ">savePrefLcl";
+				return LOG_TAG + ">savePrefLcl";
 			}
 
 			@Override
@@ -312,7 +331,7 @@ public class PreferenceUtils {
 		}.executeOnExecutor(TaskUtils.THREAD_POOL_EXECUTOR);
 	}
 
-	private static void savePref(SharedPreferences sharedPreferences, String prefKey, Integer newValue) {
+	private static void savePref(@NonNull SharedPreferences sharedPreferences, @NonNull String prefKey, @Nullable Integer newValue) {
 		SharedPreferences.Editor editor = sharedPreferences.edit();
 		if (newValue == null) {
 			editor.remove(prefKey);
@@ -322,7 +341,7 @@ public class PreferenceUtils {
 		editor.apply();
 	}
 
-	private static void savePref(SharedPreferences sharedPreferences, String prefKey, Boolean newValue) {
+	private static void savePref(@NonNull SharedPreferences sharedPreferences, @NonNull String prefKey, @Nullable Boolean newValue) {
 		SharedPreferences.Editor editor = sharedPreferences.edit();
 		if (newValue == null) {
 			editor.remove(prefKey);
@@ -332,7 +351,7 @@ public class PreferenceUtils {
 		editor.apply();
 	}
 
-	private static void savePref(SharedPreferences sharedPreferences, String prefKey, Long newValue) {
+	private static void savePref(@NonNull SharedPreferences sharedPreferences, @NonNull String prefKey, @Nullable Long newValue) {
 		SharedPreferences.Editor editor = sharedPreferences.edit();
 		if (newValue == null) {
 			editor.remove(prefKey);
@@ -342,13 +361,13 @@ public class PreferenceUtils {
 		editor.apply();
 	}
 
-	private static void savePref(SharedPreferences sharedPreferences, String prefKey, String newValue) {
+	private static void savePref(@NonNull SharedPreferences sharedPreferences, @NonNull String prefKey, @Nullable String newValue) {
 		SharedPreferences.Editor editor = sharedPreferences.edit();
 		editor.putString(prefKey, newValue);
 		editor.apply();
 	}
 
-	private static void savePref(SharedPreferences sharedPreferences, String prefKey, Set<String> newValue) {
+	private static void savePref(@NonNull SharedPreferences sharedPreferences, @NonNull String prefKey, @Nullable Set<String> newValue) {
 		SharedPreferences.Editor editor = sharedPreferences.edit();
 		editor.putStringSet(prefKey, newValue);
 		editor.apply();
